@@ -1,4 +1,4 @@
-module github.com/devopsfaith/krakend
+module github.com/podliy16/krakend
 
 go 1.13
 
