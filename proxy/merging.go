@@ -56,20 +56,20 @@ func parallelMerge(timeout time.Duration, rc ResponseCombiner, next ...Proxy) Pr
 	return func(ctx context.Context, request *Request) (*Response, error) {
 		localCtx, cancel := context.WithTimeout(ctx, timeout)
 
-		parts := make(chan *Response, len(next))
+		parts := make(chan *indexedResponse, len(next))
 		failed := make(chan error, len(next))
 
-		for _, n := range next {
-			go requestPart(localCtx, n, request, parts, failed)
+		for i, n := range next {
+			go indexedRequestPart(localCtx, n, request, parts, failed, i)
 		}
 
 		acc := newIncrementalMergeAccumulator(len(next), rc)
 		for i := 0; i < len(next); i++ {
 			select {
 			case err := <-failed:
-				acc.Merge(nil, err)
+				acc.AddResponse(nil, nil, err)
 			case response := <-parts:
-				acc.Merge(response, nil)
+				acc.AddResponse(response, request, nil)
 			}
 		}
 
@@ -140,7 +140,7 @@ func sequentialMerge(patterns []string, timeout time.Duration, rc ResponseCombin
 					}
 				}
 			}
-			requestPart(localCtx, n, request, out, errCh)
+			requestPart(localCtx, n, request, out, errCh, 0)
 			select {
 			case err := <-errCh:
 				if i == 0 {
@@ -164,9 +164,15 @@ func sequentialMerge(patterns []string, timeout time.Duration, rc ResponseCombin
 	}
 }
 
+type indexedResponse struct {
+	response *Response
+	index int
+}
+
 type incrementalMergeAccumulator struct {
 	pending  int
 	data     *Response
+	responses []*Response
 	combiner ResponseCombiner
 	errs     []error
 }
@@ -176,6 +182,26 @@ func newIncrementalMergeAccumulator(total int, combiner ResponseCombiner) *incre
 		pending:  total,
 		combiner: combiner,
 		errs:     []error{},
+		responses: make([]*Response, total),
+	}
+}
+
+func (i *incrementalMergeAccumulator) AddResponse(res *indexedResponse, request *Request, err error) {
+	i.pending--
+	if err != nil {
+		i.errs = append(i.errs, err)
+		if i.data != nil {
+			i.data.IsComplete = false
+		}
+	}
+	if res == nil {
+		i.errs = append(i.errs, errNullResult)
+	}
+	if res != nil {
+		i.responses[res.index] = res.response
+	}
+	if i.pending == 0 {
+		i.data = i.combiner(len(i.responses), request, i.responses)
 	}
 }
 
@@ -196,7 +222,7 @@ func (i *incrementalMergeAccumulator) Merge(res *Response, err error) {
 		i.data = res
 		return
 	}
-	i.data = i.combiner(2, []*Response{i.data, res})
+	i.data = i.combiner(2, nil, []*Response{i.data, res})
 }
 
 func (i *incrementalMergeAccumulator) Result() (*Response, error) {
@@ -210,7 +236,32 @@ func (i *incrementalMergeAccumulator) Result() (*Response, error) {
 	return i.data, newMergeError(i.errs)
 }
 
-func requestPart(ctx context.Context, next Proxy, request *Request, out chan<- *Response, failed chan<- error) {
+func indexedRequestPart(ctx context.Context, next Proxy, request *Request, out chan<- *indexedResponse, failed chan<- error, index int) {
+	localCtx, cancel := context.WithCancel(ctx)
+
+	in, err := next(localCtx, request)
+	if err != nil {
+		failed <- err
+		cancel()
+		return
+	}
+	if in == nil {
+		failed <- errNullResult
+		cancel()
+		return
+	}
+	select {
+	case out <- &indexedResponse{
+		response: in,
+		index: index,
+	}:
+	case <-ctx.Done():
+		failed <- ctx.Err()
+	}
+	cancel()
+}
+
+func requestPart(ctx context.Context, next Proxy, request *Request, out chan<- *Response, failed chan<- error, index int) {
 	localCtx, cancel := context.WithCancel(ctx)
 
 	in, err := next(localCtx, request)
@@ -252,7 +303,7 @@ func (m mergeError) Error() string {
 }
 
 // ResponseCombiner func to merge the collected responses into a single one
-type ResponseCombiner func(int, []*Response) *Response
+type ResponseCombiner func(int, *Request, []*Response) *Response
 
 // RegisterResponseCombiner adds a new response combiner into the internal register
 func RegisterResponseCombiner(name string, f ResponseCombiner) {
@@ -285,7 +336,7 @@ func getResponseCombiner(extra config.ExtraConfig) ResponseCombiner {
 	return combiner
 }
 
-func combineData(total int, parts []*Response) *Response {
+func combineData(total int, request *Request, parts []*Response) *Response {
 	isComplete := len(parts) == total
 	var retResponse *Response
 	for _, part := range parts {
