@@ -13,9 +13,9 @@ import (
 
 	"github.com/go-chi/chi"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/proxy"
-	"github.com/devopsfaith/krakend/router"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/proxy"
+	"github.com/podliy16/krakend/router"
 )
 
 func TestEndpointHandler_ok(t *testing.T) {

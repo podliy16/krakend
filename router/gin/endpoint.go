@@ -8,10 +8,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/core"
-	"github.com/devopsfaith/krakend/proxy"
-	"github.com/devopsfaith/krakend/router"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/core"
+	"github.com/podliy16/krakend/proxy"
+	"github.com/podliy16/krakend/router"
 )
 
 const requestParamsAsterisk string = "*"

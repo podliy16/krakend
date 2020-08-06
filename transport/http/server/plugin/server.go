@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/logging"
 )
 
-const Namespace = "github_com/devopsfaith/krakend/transport/http/server/handler"
+const Namespace = "github_com/podliy16/krakend/transport/http/server/handler"
 
 type RunServer func(context.Context, config.ServiceConfig, http.Handler) error
 

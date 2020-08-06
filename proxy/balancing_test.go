@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/sd/dnssrv"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/sd/dnssrv"
 )
 
 func TestNewLoadBalancedMiddleware_ok(t *testing.T) {

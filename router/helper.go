@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/proxy"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/proxy"
 	"net/http"
 )
 

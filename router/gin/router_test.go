@@ -14,10 +14,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
-	"github.com/devopsfaith/krakend/proxy"
-	"github.com/devopsfaith/krakend/router"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/logging"
+	"github.com/podliy16/krakend/proxy"
+	"github.com/podliy16/krakend/router"
 	"github.com/gin-gonic/gin"
 )
 

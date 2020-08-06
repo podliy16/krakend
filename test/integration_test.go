@@ -20,14 +20,14 @@ import (
 
 	"github.com/urfave/negroni"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
-	"github.com/devopsfaith/krakend/proxy"
-	"github.com/devopsfaith/krakend/router/chi"
-	"github.com/devopsfaith/krakend/router/gin"
-	"github.com/devopsfaith/krakend/router/gorilla"
-	"github.com/devopsfaith/krakend/router/httptreemux"
-	krakendnegroni "github.com/devopsfaith/krakend/router/negroni"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/logging"
+	"github.com/podliy16/krakend/proxy"
+	"github.com/podliy16/krakend/router/chi"
+	"github.com/podliy16/krakend/router/gin"
+	"github.com/podliy16/krakend/router/gorilla"
+	"github.com/podliy16/krakend/router/httptreemux"
+	krakendnegroni "github.com/podliy16/krakend/router/negroni"
 )
 
 func TestKrakenD_ginRouter(t *testing.T) {

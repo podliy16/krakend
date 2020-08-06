@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/devopsfaith/krakend/logging"
-	"github.com/devopsfaith/krakend/proxy"
-	"github.com/devopsfaith/krakend/router"
-	"github.com/devopsfaith/krakend/router/mux"
+	"github.com/podliy16/krakend/logging"
+	"github.com/podliy16/krakend/proxy"
+	"github.com/podliy16/krakend/router"
+	"github.com/podliy16/krakend/router/mux"
 	"github.com/dimfeld/httptreemux"
 )
 

@@ -6,7 +6,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/devopsfaith/krakend/config"
+	"github.com/podliy16/krakend/config"
 )
 
 func TestRoundRobinLB(t *testing.T) {

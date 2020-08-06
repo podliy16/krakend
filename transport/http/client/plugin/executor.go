@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
-	"github.com/devopsfaith/krakend/transport/http/client"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/logging"
+	"github.com/podliy16/krakend/transport/http/client"
 )
 
-const Namespace = "github.com/devopsfaith/krakend/transport/http/client/executor"
+const Namespace = "github.com/podliy16/krakend/transport/http/client/executor"
 
 func HTTPRequestExecutor(
 	logger logging.Logger,

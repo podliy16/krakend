@@ -1,9 +1,9 @@
 package proxy
 
 import (
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
-	"github.com/devopsfaith/krakend/sd"
+	"github.com/podliy16/krakend/config"
+	"github.com/podliy16/krakend/logging"
+	"github.com/podliy16/krakend/sd"
 )
 
 // Factory creates proxies based on the received endpoint configuration.
